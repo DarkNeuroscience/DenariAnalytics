@@ -4,23 +4,10 @@ from MoneyAfterDark import NarcoAnalytics as narc, Montana as mn, TaxTools as ta
 from dash import html, dcc
 from dash.dependencies import Input, Output
 
-from zapp import app
+from app import app
 
-slash = '/'
-path = os.getcwd()
-export_loc = path + slash + "Exports"
-
-costs = pd.read_csv(path + slash + "spending.csv", infer_datetime_format=True)
-pack = pd.read_csv(path + slash + "packages.csv", infer_datetime_format=True)
-#clients = pd.read_csv(path + slash + "clients.csv", infer_datetime_format=True)
-sales = pd.read_csv(path + slash + "calex.csv", infer_datetime_format=True)
-x = [costs,pack,sales]
-for i in x:
-    narc.set_dates(i)
-c = narc.split_dates(costs,format='period')
-s = narc.split_dates(sales,format='period')
-
-from zsales import sales_layout
+from sales import sales_layout
+from costs import costs_layout
 
 tabs_styles = {
     'height': '44px'
@@ -60,10 +47,10 @@ def render_content(tab):
     selected = {'cash_flow':html.H3('Cash Flow'),
                 'rev-exp':html.H3('Revenue/Expenditure'),
                 'sales':html.Div(sales_layout),
-                'costs':html.H3('Costs'),
+                'costs':html.H3(costs_layout),
                 'tax':html.H3('Tax')}
     
     return html.Div([selected[tab]])
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)

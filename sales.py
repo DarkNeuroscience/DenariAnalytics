@@ -8,24 +8,22 @@ import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output
 
-from zapp import app
+from app import app
 
 slash = '/'
 path = os.getcwd()
-export_loc = path + slash + "Exports"
-costs = pd.read_csv(path + slash + "spending.csv", infer_datetime_format=True)
+#costs = pd.read_csv(path + slash + "spending.csv", infer_datetime_format=True)
 pack = pd.read_csv(path + slash + "packages.csv", infer_datetime_format=True)
 #clients = pd.read_csv(path + slash + "clients.csv", infer_datetime_format=True)
 sales = pd.read_csv(path + slash + "calex.csv", infer_datetime_format=True)
-x = [costs,pack,sales]
+x = [pack,sales]
 for i in x:
     narc.set_dates(i)
-c = narc.split_dates(costs,format='period')
 s = narc.split_dates(sales,format='period')
 
 
-sales_layout = html.Div(children=[html.H1('Revenue Analysis',style={'textAlign':'center','color':'#503D36','font-size': 40}),
-                                  html.P('Analysis of Sales Packages by Month.', style={'text-align':'center', 'color':'#503D36'}),
+sales_layout = html.Div(children=[html.H1('Sales Analysis',style={'textAlign':'center','color':'#503D36','font-size': 40}),
+                                  html.P('Analysis of Revenue by Packages', style={'text-align':'center', 'color':'#503D36'}),
                                   html.Div([dcc.Dropdown(id='dropdown-1', 
                                                          value='year',
                                                          options=[
@@ -45,10 +43,8 @@ sales_layout = html.Div(children=[html.H1('Revenue Analysis',style={'textAlign':
                                 html.Div([
                                     html.Div(dcc.Graph(id='pack-sales')),
                                     html.Div(dcc.Graph(id='pack-tot'))], style={'display': 'flex'}),
-                                    #html.Div(dcc.Graph(id='cash-card')),], style={'display': 'flex'}),
                                 
                                 html.Div([
-                                    #html.Div(dcc.Graph(id='pack-tot')),
                                     html.Div(dcc.Graph(id='cash-card')),
                                     html.Div(dcc.Graph(id='pay-tot'))], style={'display': 'flex'})
                                ])
@@ -78,9 +74,8 @@ def sub_dropdown_2(main_dropdown_value):
 def get_graph(main_dropdown_value,sub_dropdown_1,sub_dropdown_2,bar_mode):
     color = 'one'
     dff = s.copy()
-    
-    
     cat = 'package'
+    
     order_ls = narc.column_set(dff,cat,'payment')
     order_lspt = narc.column_set(dff,'payment type','payment')
     dff = dff[dff[main_dropdown_value] == sub_dropdown_1]
